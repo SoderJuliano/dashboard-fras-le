@@ -117,26 +117,37 @@ function getStatus(){
     return this.status;
 }
 
-function makeTable(dia){ 
+function makeTable(dia, turno){ 
  var db = openDatabase("Prensas", "1.0", "Prensas Siblo Web SQL Database", 200000*1024); 
-
 db.transaction(function(transaction){
     transaction.executeSql(
         "SELECT * FROM Producao WHERE dia = ?",
         [dia],
         function(transaction, result){
-            console.log('deu certo!');
+            console.log('deu certo!'); 
             console.log(result);
            for(var i = 0; i < result.rows.length; i++){
 			   console.log(result.rows.item(i)['maquina']);
 			   // jquery
-								$( "#table-data" ).append( "<tr>" );
+                    if(result.rows.item(i).turno == turno){
+                                $("#title-dashboard").text("Producao de hoje! T"+turno);
+                        	    $( "#table-data" ).append( "<tr>" );
 								$( "#table-data" ).append( "<td>"+result.rows.item(i).maquina+"</td>" );
 								$( "#table-data" ).append( "<td>"+result.rows.item(i).meta+"</td>" );
 								$( "#table-data" ).append( "<td>"+result.rows.item(i).telhas_produzidas+"</td>" );
 								$( "#table-data" ).append( "<td>"+result.rows.item(i).pecas_produzidas+"</td>" );
-								$( "#table-data" ).append( "<td>"+result.rows.item(i).kg+"</td>" );
-								 $( "#table-data" ).append( "</tr>" );
+								$( "#table-data" ).append( "<td>"+result.rows.item(i).kg+"kg</td>" );
+								$( "#table-data" ).append( "</tr>" );
+                    }else if(result.rows.item(i).turno == getLastTurno()){
+                                $("#title-dashboard").text("Producao do turno anterior! T"+getLastTurno());
+                                $( "#table-data" ).append( "<tr>" );
+								$( "#table-data" ).append( "<td>"+result.rows.item(i).maquina+"</td>" );
+								$( "#table-data" ).append( "<td>"+result.rows.item(i).meta+"</td>" );
+								$( "#table-data" ).append( "<td>"+result.rows.item(i).telhas_produzidas+"</td>" );
+								$( "#table-data" ).append( "<td>"+result.rows.item(i).pecas_produzidas+"</td>" );
+								$( "#table-data" ).append( "<td>"+result.rows.item(i).kg+"kg</td>" );
+								$( "#table-data" ).append( "</tr>" );
+                    }	
            }
         },
         function(transaction, error){
@@ -144,5 +155,46 @@ db.transaction(function(transaction){
             console.log(error);
         }
     );
+});
+}
+function getLastTurno(){
+    if((getTurno()-1)<=0){
+        return 3;
+    }else{
+    return getTurno()-1; 
+    }
+}
+function dataMenos(data, i){
+    let d = data.split("/");
+    const dia = parseInt(d[0])-i;
+    const mes = d[1];
+    const ano = d[2]; 
+    return dia+"/"+mes+"/"+ano; 
+}
+function mudarPadraoData(data){
+let d = data.split("/");
+const dia = d[0];
+const mes = d[1];
+const ano = d[2];
+return mes+"/"+dia+"/"+ano;
+}
+function getTelhas(dia, vao, turno){ 
+    var db = openDatabase("Prensas", "1.0", "Prensas Siblo Web SQL Database", 200000*1024); 
+    db.transaction(function (tx) {
+    let retorno =[];
+    let datas = [];
+        for(let x = 0; x<7; x++ ){ 
+            let soma = 0;
+            tx.executeSql('CREATE TABLE IF NOT EXISTS Producao (vao, turno, dia, maquina, meta, telhas_produzidas, pecas_produzidas, kg)');
+              tx.executeSql('SELECT * FROM Producao WHERE vao = ? AND turno=? AND dia=?', [vao, turno, dataMenos(dia, x)], function (tx, results) { 
+                var len = results.rows.length, i;
+			     for (i = 0; i < len; i++){
+                  console.log(results.rows.item(i).dia);
+			      soma += parseInt(results.rows.item(i).telhas_produzidas);
+                } 
+                datas.push(dataMenos(dia, x));
+                retorno.push(soma);
+             }, null); 
+    } setGraph(datas, retorno);
 });
 }

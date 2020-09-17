@@ -1,5 +1,5 @@
 /* globals Chart:false, feather:false */
-
+function setGraph(datas, somas){ 
 (function () {
   'use strict'
 
@@ -11,25 +11,9 @@
   var myChart = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: [
-        'Sunday',
-        'Monday',
-        'Tuesday',
-        'Wednesday',
-        'Thursday',
-        'Friday',
-        'Saturday'
-      ],
+      labels: datas,
       datasets: [{
-        data: [
-          15339,
-          21345,
-          18483,
-          24003,
-          23489,
-          24092,
-          12034
-        ],
+        data: somas,
         lineTension: 0,
         backgroundColor: 'transparent',
         borderColor: '#007bff',
@@ -51,3 +35,4 @@
     }
   })
 }())
+}
