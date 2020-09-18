@@ -130,7 +130,7 @@ db.transaction(function(transaction){
 			   console.log(result.rows.item(i)['maquina']);
 			   // jquery
                     if(result.rows.item(i).turno == turno){
-                                $("#title-dashboard").text("Producao de hoje! T"+turno);
+                                $("#title-dashboard").text("Producao de hoje do turno "+turno);
                         	    $( "#table-data" ).append( "<tr>" );
 								$( "#table-data" ).append( "<td>"+result.rows.item(i).maquina+"</td>" );
 								$( "#table-data" ).append( "<td>"+result.rows.item(i).meta+"</td>" );
@@ -138,8 +138,8 @@ db.transaction(function(transaction){
 								$( "#table-data" ).append( "<td>"+result.rows.item(i).pecas_produzidas+"</td>" );
 								$( "#table-data" ).append( "<td>"+result.rows.item(i).kg+"kg</td>" );
 								$( "#table-data" ).append( "</tr>" );
-                    }else if(result.rows.item(i).turno == getLastTurno()){
-                                $("#title-dashboard").text("Producao do turno anterior! T"+getLastTurno());
+                    }else{
+                                $("#title-dashboard").text("Producao do turno "+getLastTurno());
                                 $( "#table-data" ).append( "<tr>" );
 								$( "#table-data" ).append( "<td>"+result.rows.item(i).maquina+"</td>" );
 								$( "#table-data" ).append( "<td>"+result.rows.item(i).meta+"</td>" );
@@ -178,7 +178,7 @@ const mes = d[1];
 const ano = d[2];
 return mes+"/"+dia+"/"+ano;
 }
-function getTelhas(dia, vao, turno){ 
+function getTelhas(dia, vao, turno, tipo){ 
     var db = openDatabase("Prensas", "1.0", "Prensas Siblo Web SQL Database", 200000*1024); 
     db.transaction(function (tx) {
     let retorno =[];
@@ -195,6 +195,11 @@ function getTelhas(dia, vao, turno){
                 datas.push(dataMenos(dia, x));
                 retorno.push(soma);
              }, null); 
-    } setGraph(datas, retorno);
+    } 
+    if(tipo=='bar'){
+        setGraph2(datas, retorno); 
+    }else{
+        setGraph(datas, retorno);
+    }
 });
 }

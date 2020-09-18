@@ -127,8 +127,8 @@
         <h1 class="h2">Dashboard</h1>
         <div class="btn-toolbar mb-2 mb-md-0">
           <div class="btn-group mr-2">
-            <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
-            <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+            <button id="btnLine" type="button" class="btn btn-sm btn-outline-secondary">Linha</button>
+            <button id="btnBar" type="button" class="btn btn-sm btn-outline-secondary">Barra</button>
           </div>
           <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
             <span data-feather="calendar"></span>
@@ -137,7 +137,9 @@
         </div>
       </div>
 
-      <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
+      <canvas class="my-4 w-100" id="myChartBar" width="900" height="380"></canvas>
+      <canvas class="my-4 w-100" id="myChartLine" width="900" height="380"></canvas>
+      
 
       <h2 id="title-dashboard">Section title</h2>
       <div class="table-responsive">
@@ -167,7 +169,20 @@
 		<script src="jquery-3.5.1.min.js"></script>
 		<script src="classes.js"></script>
     <script>makeTable(getData(), getTurno());
-    getTelhas(getData(), getVao(), getTurno());
+         
+          $('#btnLine').click(function(){
+            $("#myChartBar").hide();
+            $("#myChartLine").fadeIn();
+            getTelhas(getData(), getVao(), getTurno(), 'line');
+          });
+          $('#btnBar').click(function(){ 
+            $("#myChartLine").hide();
+            $("#myChartBar").fadeIn();
+            getTelhas(getData(), getVao(), getTurno(), 'bar');
+          });
+          $("#myChartLine").hide();
+          $("#myChartBar").hide();
+
         </script>
 		</body>
 </html>
