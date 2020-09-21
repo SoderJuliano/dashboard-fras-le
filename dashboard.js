@@ -35,6 +35,7 @@ function setGraph(datas, somas){
     }
   })
 }())
+window.resizeTo(600,1000); 
 }
 function setGraph2(datas, somas){ 
   (function () {
@@ -72,5 +73,6 @@ function setGraph2(datas, somas){
       }
     })
   }())
-  }
+  window.resizeTo(1900,1400);  
+}
   

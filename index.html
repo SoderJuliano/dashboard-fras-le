@@ -130,10 +130,11 @@
             <button id="btnLine" type="button" class="btn btn-sm btn-outline-secondary">Linha</button>
             <button id="btnBar" type="button" class="btn btn-sm btn-outline-secondary">Barra</button>
           </div>
-          <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
-            <span data-feather="calendar"></span>
-            This week
-          </button>
+            <select data-feather="calendar" class="btn btn-sm btn-outline-secondary dropdown-toggle">
+              <option>ESTA SEMANA</option>
+              <option>ESTE MÊS</option>
+              <option>ESTE ANO</option>
+          </select>
         </div>
       </div>
 
@@ -182,7 +183,8 @@
           });
           $("#myChartLine").hide();
           $("#myChartBar").hide();
-
+          $('select>option:eq(1)').attr('selected', true);
+          producaoExiste(getData(), getVao(), getTurno());
         </script>
 		</body>
 </html>

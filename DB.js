@@ -118,6 +118,11 @@ function getStatus(){
 }
 
 function makeTable(dia, turno){ 
+let booleano = localStorage.getItem("producaoDiaExiste");
+if(booleano=="Sim"){
+}else{
+    dia = dataMenos(dia, 1);
+}
  var db = openDatabase("Prensas", "1.0", "Prensas Siblo Web SQL Database", 200000*1024); 
 db.transaction(function(transaction){
     transaction.executeSql(
@@ -130,7 +135,7 @@ db.transaction(function(transaction){
 			   console.log(result.rows.item(i)['maquina']);
 			   // jquery
                     if(result.rows.item(i).turno == turno){
-                                $("#title-dashboard").text("Producao de hoje do turno "+turno);
+                                $("#title-dashboard").text("Producao dia "+dia+" do turno "+turno);
                         	    $( "#table-data" ).append( "<tr>" );
 								$( "#table-data" ).append( "<td>"+result.rows.item(i).maquina+"</td>" );
 								$( "#table-data" ).append( "<td>"+result.rows.item(i).meta+"</td>" );
@@ -138,16 +143,7 @@ db.transaction(function(transaction){
 								$( "#table-data" ).append( "<td>"+result.rows.item(i).pecas_produzidas+"</td>" );
 								$( "#table-data" ).append( "<td>"+result.rows.item(i).kg+"kg</td>" );
 								$( "#table-data" ).append( "</tr>" );
-                    }else{
-                                $("#title-dashboard").text("Producao do turno "+getLastTurno());
-                                $( "#table-data" ).append( "<tr>" );
-								$( "#table-data" ).append( "<td>"+result.rows.item(i).maquina+"</td>" );
-								$( "#table-data" ).append( "<td>"+result.rows.item(i).meta+"</td>" );
-								$( "#table-data" ).append( "<td>"+result.rows.item(i).telhas_produzidas+"</td>" );
-								$( "#table-data" ).append( "<td>"+result.rows.item(i).pecas_produzidas+"</td>" );
-								$( "#table-data" ).append( "<td>"+result.rows.item(i).kg+"kg</td>" );
-								$( "#table-data" ).append( "</tr>" );
-                    }	
+                    }
            }
         },
         function(transaction, error){
@@ -201,5 +197,20 @@ function getTelhas(dia, vao, turno, tipo){
     }else{
         setGraph(datas, retorno);
     }
+});
+}
+function producaoExiste(dia, vao, turno){ 
+    var db = openDatabase("Prensas", "1.0", "Prensas Siblo Web SQL Database", 200000*1024); 
+    db.transaction(function (tx) {
+            tx.executeSql('CREATE TABLE IF NOT EXISTS Producao (vao, turno, dia, maquina, meta, telhas_produzidas, pecas_produzidas, kg)');
+              tx.executeSql('SELECT * FROM Producao WHERE vao = ? AND turno=? AND dia=?', [vao, turno, dia], function (tx, results) { 
+                var len = results.rows.length;
+			     if (len>0){
+                    localStorage.setItem("producaoDiaExiste", "Sim");
+                 }else{
+                    localStorage.setItem("producaoDiaExiste", "Nao");
+                 } 
+             }, null);
+   
 });
 }
