@@ -117,32 +117,30 @@ function getStatus(){
     return this.status;
 }
 
-function makeTable(dia, turno){ 
-let booleano = localStorage.getItem("producaoDiaExiste");
-if(booleano=="Sim"){
-}else{
-    dia = dataMenos(dia, 1);
-}
+function makeTable(turno){ 
  var db = openDatabase("Prensas", "1.0", "Prensas Siblo Web SQL Database", 200000*1024); 
 db.transaction(function(transaction){
     transaction.executeSql(
-        "SELECT * FROM Producao WHERE dia = ?",
-        [dia],
+        "SELECT * FROM Producao WHERE turno = ? AND vao = ?",
+        [turno, getVao()],
         function(transaction, result){
             console.log('deu certo!'); 
             console.log(result);
            for(var i = 0; i < result.rows.length; i++){
 			   console.log(result.rows.item(i)['maquina']);
 			   // jquery
-                    if(result.rows.item(i).turno == turno){
-                                $("#title-dashboard").text("Producao dia "+dia+" do turno "+turno);
-                        	    $( "#table-data" ).append( "<tr>" );
+                    if(result.rows.item(i).turno == turno && result.rows.item(i)['vao'] == getVao()){
+                                $("#title-dashboard").text("Produção turno "+turno+" vão "+getVao());
+                                $( "#table-data" ).append( "<tr>" );
+                                $( "#table-data" ).append( "<td>"+result.rows.item(i).dia+"</td>");
 								$( "#table-data" ).append( "<td>"+result.rows.item(i).maquina+"</td>" );
 								$( "#table-data" ).append( "<td>"+result.rows.item(i).meta+"</td>" );
 								$( "#table-data" ).append( "<td>"+result.rows.item(i).telhas_produzidas+"</td>" );
 								$( "#table-data" ).append( "<td>"+result.rows.item(i).pecas_produzidas+"</td>" );
 								$( "#table-data" ).append( "<td>"+result.rows.item(i).kg+"kg</td>" );
 								$( "#table-data" ).append( "</tr>" );
+                    }else{
+
                     }
            }
         },
