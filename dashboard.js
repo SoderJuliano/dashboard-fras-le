@@ -6,7 +6,7 @@ function setGraph(datas, somas){
   feather.replace()
 
   // Graphs
-  var ctx = document.getElementById('myChartLine')
+  var ctx = document.getElementById('myChart')
   // eslint-disable-next-line no-unused-vars
   var myChart = new Chart(ctx, {
     type: 'line',
@@ -34,8 +34,8 @@ function setGraph(datas, somas){
       }
     }
   })
-}())
-window.resizeTo(600,1000); 
+}()) 
+window.resizeTo($(window).width()+50,1000); 
 }
 function setGraph2(datas, somas){ 
   (function () {
@@ -73,6 +73,40 @@ function setGraph2(datas, somas){
       }
     })
   }())
-  window.resizeTo(1900,1400);  
+  window.resizeTo( $(window).width()+50, 900);  
 }
   
+function graphPizza(data){
+
+  var ctx = document.getElementById('myChartPizza').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+        labels: ['turno 1 '+data[0]+"%", 'turno 2 '+data[1]+"%", 'turno 3 '+data[2]+"%"],
+        datasets: [{
+            label: '# of Votes',
+            data: data,
+            backgroundColor: [
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(255, 000, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(255, 000, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    }
+});
+}

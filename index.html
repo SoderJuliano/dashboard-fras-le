@@ -80,7 +80,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a id="dbList" class="nav-link" href="#">
               <span data-feather="layers"></span>
               Banco de dados
             </a>
@@ -124,7 +124,7 @@
 
     <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
       <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2">Dashboard</h1>
+        <h1 id="titulo" class="h2">Dashboard</h1>
         <div class="btn-toolbar mb-2 mb-md-0">
           <div class="btn-group mr-2">
             <button id="btnLine" type="button" class="btn btn-sm btn-outline-secondary">Linha</button>
@@ -139,8 +139,8 @@
       </div>
 
       <canvas class="my-4 w-100" id="myChartBar" width="900" height="380"></canvas>
-      <canvas class="my-4 w-100" id="myChartLine" width="900" height="380"></canvas>
-      
+      <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
+      <canvas class="my-4 w-100" id="myChartPizza" width="900" height="380"></canvas>
 
       <h2 id="title-dashboard">Section title</h2>
       <div class="table-responsive">
@@ -173,19 +173,25 @@
     <script>makeTable(getTurno());
          
           $('#btnLine').click(function(){
-            $("#myChartBar").hide();
-            $("#myChartLine").fadeIn();
             getTelhas(getData(), getVao(), getTurno(), 'line');
+            $("#myChartBar").hide();
+            $("#myChart").fadeIn();
           });
           $('#btnBar').click(function(){ 
-            $("#myChartLine").hide();
-            $("#myChartBar").fadeIn();
             getTelhas(getData(), getVao(), getTurno(), 'bar');
+            $("#myChart").hide();
+            $("#myChartBar").fadeIn();
           });
-          $("#myChartLine").hide();
           $("#myChartBar").hide();
+          $("#myChartPizza").hide();
           $('select>option:eq(1)').attr('selected', true);
-          
+          $('#dbList').on('click',function(){
+            $("#myChartBar").hide();
+            $("#myChart").hide();
+            eficienciaTurnos();
+            todatabela();
+            $("#titulo").text("Eficiencia de cada turno");
+          });
         </script>
 		</body>
 </html>

@@ -160,9 +160,31 @@ function getLastTurno(){
 }
 function dataMenos(data, i){
     let d = data.split("/");
-    const dia = parseInt(d[0])-i;
+    let dia = parseInt(d[0])-i;
     const mes = d[1];
     const ano = d[2]; 
+    switch (dia) {
+        case 0:
+            dia = 31;
+          break;
+        case -1:
+            dia = 30;
+          break;
+        case -2:
+            dia = 29;
+          break;
+        case -3:
+            dia = 28;
+          break;
+        case -4:
+            dia = 27;
+          break;
+        case -5:
+            dia = 26;
+          break;
+        case  -6:
+            dia = 25;
+      }
     return dia+"/"+mes+"/"+ano; 
 }
 function mudarPadraoData(data){
@@ -210,5 +232,99 @@ function producaoExiste(dia, vao, turno){
                  } 
              }, null);
    
+});
+}
+function todatabela(){ 
+    var db = openDatabase("Prensas", "1.0", "Prensas Siblo Web SQL Database", 200000*1024); 
+db.transaction(function(transaction){
+    transaction.executeSql(
+        "SELECT * FROM Producao",[],
+        function(transaction, result){
+            console.log('deu certo!'); 
+           for(var i = 0; i < result.rows.length; i++){
+               console.log(result.rows.item(i)['maquina']);
+			   // jquery
+                                $("#title-dashboard").text("todo Banco de Dados");
+                                $( "#table-data" ).append( "<tr>" );
+                                $( "#table-data" ).append( "<td>"+result.rows.item(i).dia+"</td>");
+								$( "#table-data" ).append( "<td>"+result.rows.item(i).maquina+"</td>" );
+								$( "#table-data" ).append( "<td>"+result.rows.item(i).meta+"</td>" );
+								$( "#table-data" ).append( "<td>"+result.rows.item(i).telhas_produzidas+"</td>" );
+								$( "#table-data" ).append( "<td>"+result.rows.item(i).pecas_produzidas+"</td>" );
+								$( "#table-data" ).append( "<td>"+result.rows.item(i).kg+"kg</td>" );
+								$( "#table-data" ).append( "</tr>" );
+           }
+        },
+        function(transaction, error){
+            console.log('deu pau!');
+            console.log(error);
+        }
+    );
+});
+}
+function eficienciaTurnos(){ 
+    var db = openDatabase("Prensas", "1.0", "Prensas Siblo Web SQL Database", 200000*1024); 
+db.transaction(function(transaction){
+    transaction.executeSql(
+        "SELECT * FROM Producao",[],
+        function(transaction, result){
+            console.log('deu certo!'); 
+
+            let metas = [0,0,0];
+            let atingido = [0,0,0];
+            let t1eficiencia = 0;
+            let t2eficiencia = 0;
+            let t3eficiencia = 0;
+
+           for(var i = 0; i < result.rows.length; i++){
+               console.log(result.rows.item(i)['maquina']);
+               if(result.rows.item(i).turno==1){
+                if(result.rows.item(i).meta=='' || result.rows.item(i).meta==null){
+                    metas[0] += 0;
+                   }else{
+                    metas[0] += parseInt(result.rows.item(i).meta);
+                   }
+                   if(result.rows.item(i).telhas_produzidas=='' || result.rows.item(i).telhas_produzidas==null){
+                    atingido[0] += 0;
+                }else{
+                    atingido[0] += parseInt(result.rows.item(i).telhas_produzidas);
+                }
+               }else if(result.rows.item(i).turno==2){
+                   if(result.rows.item(i).meta=='' || result.rows.item(i).meta==null){
+                    metas[1] += 0;
+                   }else{
+                    metas[1] += parseInt(result.rows.item(i).meta);
+                   }
+                    if(result.rows.item(i).telhas_produzidas=='' || result.rows.item(i).telhas_produzidas==null){
+                        atingido[1] += 0;
+                    }else{
+                        atingido[1] += parseInt(result.rows.item(i).telhas_produzidas);
+                    }
+               }else if(result.rows.item(i).turno==3){
+                if(result.rows.item(i).meta=='' || result.rows.item(i).meta==null){
+                    metas[2] += 0;
+                   }else{
+                    metas[2] += parseInt(result.rows.item(i).meta);
+                   }
+                   if(result.rows.item(i).telhas_produzidas=='' || result.rows.item(i).telhas_produzidas==null){
+                    atingido[2] += 0;
+                }else{
+                    atingido[2] += parseInt(result.rows.item(i).telhas_produzidas);
+                }
+               }
+           }
+           t1eficiencia = parseInt((atingido[0]/metas[0])*100);
+           t2eficiencia = parseInt((atingido[1]/metas[1])*100);
+           t3eficiencia = parseInt((atingido[2]/metas[2])*100);
+           const data = [t1eficiencia,t2eficiencia,t3eficiencia];
+           
+            graphPizza(data);
+            $("#myChartPizza").fadeIn();
+        },
+        function(transaction, error){
+            console.log('deu pau!');
+            console.log(error);
+        }
+    );
 });
 }
