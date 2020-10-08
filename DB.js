@@ -125,20 +125,21 @@ db.transaction(function(transaction){
         [turno, getVao()],
         function(transaction, result){
             console.log('deu certo!'); 
-            console.log(result);
-           for(var i = 0; i < result.rows.length; i++){
+           // console.log(result);
+           for(var i = result.rows.length-1; i >= 0; i--){
 			   console.log(result.rows.item(i)['maquina']);
 			   // jquery
                     if(result.rows.item(i).turno == turno && result.rows.item(i)['vao'] == getVao()){
                                 $("#title-dashboard").text("Produção turno "+turno+" vão "+getVao());
-                                $( "#table-data" ).append( "<tr>" );
-                                $( "#table-data" ).append( "<td>"+result.rows.item(i).dia+"</td>");
-								$( "#table-data" ).append( "<td>"+result.rows.item(i).maquina+"</td>" );
-								$( "#table-data" ).append( "<td>"+result.rows.item(i).meta+"</td>" );
-								$( "#table-data" ).append( "<td>"+result.rows.item(i).telhas_produzidas+"</td>" );
-								$( "#table-data" ).append( "<td>"+result.rows.item(i).pecas_produzidas+"</td>" );
-								$( "#table-data" ).append( "<td>"+result.rows.item(i).kg+"kg</td>" );
-								$( "#table-data" ).append( "</tr>" );
+                                $( ".table-data" ).append( "<tr>" );
+								$( ".table-data" ).append( "<td class='tr"+result.rows.item(i).turno+"'>"+result.rows.item(i).turno+"</td>");
+                                $( ".table-data" ).append( "<td>"+result.rows.item(i).dia+"</td>");
+								$( ".table-data" ).append( "<td>"+result.rows.item(i).maquina+"</td>" );
+								$( ".table-data" ).append( "<td>"+result.rows.item(i).meta+"</td>" );
+								$( ".table-data" ).append( "<td>"+result.rows.item(i).telhas_produzidas+"</td>" );
+								$( ".table-data" ).append( "<td>"+result.rows.item(i).pecas_produzidas+"</td>" );
+								$( ".table-data" ).append( "<td>"+result.rows.item(i).kg+"kg</td>" );
+								$( ".table-data" ).append( "</tr>" );
                     }else{
 
                     }
@@ -205,7 +206,7 @@ function getTelhas(dia, vao, turno, tipo){
               tx.executeSql('SELECT * FROM Producao WHERE vao = ? AND turno=? AND dia=?', [vao, turno, dataMenos(dia, x)], function (tx, results) { 
                 var len = results.rows.length, i;
 			     for (i = 0; i < len; i++){
-                  console.log(results.rows.item(i).dia);
+                  //console.log(results.rows.item(i).dia);
 			      soma += parseInt(results.rows.item(i).telhas_produzidas);
                 } 
                 datas.push(dataMenos(dia, x));
@@ -241,19 +242,44 @@ db.transaction(function(transaction){
         "SELECT * FROM Producao",[],
         function(transaction, result){
             console.log('deu certo!'); 
+			let tabela = "";
+			$("#title-dashboard").text("todo Banco de Dados");
+			tabela += "<table class='table table-striped table-sm'><thead><tr>";
+			tabela += "<th>Turnos</th><th>Data</th><th>Prensa</th><th>Meta</th><th>Realizado em telhas</th><th>Em peças</th><th>Material gasto</th>";
+			tabela += "</tr></thead>";
+			tabela += "<tbody>";
            for(var i = 0; i < result.rows.length; i++){
-               console.log(result.rows.item(i)['maquina']);
+               //console.log(result.rows.item(i)['maquina']);
 			   // jquery
-                                $("#title-dashboard").text("todo Banco de Dados");
-                                $( "#table-data" ).append( "<tr>" );
-                                $( "#table-data" ).append( "<td>"+result.rows.item(i).dia+"</td>");
-								$( "#table-data" ).append( "<td>"+result.rows.item(i).maquina+"</td>" );
-								$( "#table-data" ).append( "<td>"+result.rows.item(i).meta+"</td>" );
-								$( "#table-data" ).append( "<td>"+result.rows.item(i).telhas_produzidas+"</td>" );
-								$( "#table-data" ).append( "<td>"+result.rows.item(i).pecas_produzidas+"</td>" );
-								$( "#table-data" ).append( "<td>"+result.rows.item(i).kg+"kg</td>" );
-								$( "#table-data" ).append( "</tr>" );
+			   /* <table class="table table-striped table-sm">
+          <thead>
+            <tr>
+			  <th>Turno</th>
+              <th>Data</th>
+              <th>Prensa</th>
+              <th>Meta</th>
+              <th>Realizado em telhas</th>
+              <th>Em peças</th>
+              <th>Material gasto</th>
+            </tr>
+          </thead>
+		  <tbody class="table-data">
+          </tbody>*/
+								
+                                
+									 tabela += "<tr>";
+									 tabela += "<td class='tr"+result.rows.item(i).turno+"'>"+result.rows.item(i).turno+"</td>";
+									 tabela += "<td>"+result.rows.item(i).dia+"</td>";
+									 tabela += "<td>"+result.rows.item(i).maquina+"</td>";
+									 tabela += "<td>"+result.rows.item(i).meta+"</td>";
+									 tabela += "<td>"+result.rows.item(i).telhas_produzidas+"</td>";
+									 tabela += "<td>"+result.rows.item(i).pecas_produzidas+"</td>";
+									 tabela += "<td>"+result.rows.item(i).kg+"kg</td>";
+									 tabela += "</tr>";
            }
+		   tabela += "</tbody></table>"; 
+		   $("#tabela").html(tabela);
+		   trColor();
         },
         function(transaction, error){
             console.log('deu pau!');
@@ -279,38 +305,38 @@ db.transaction(function(transaction){
            for(var i = 0; i < result.rows.length; i++){
                console.log(result.rows.item(i)['maquina']);
                if(result.rows.item(i).turno==1){
-                if(result.rows.item(i).meta=='' || result.rows.item(i).meta==null){
+                if(result.rows.item(i).meta=='' || result.rows.item(i).meta==null || result.rows.item(i).meta=='undefined'){
                     metas[0] += 0;
                    }else{
                     metas[0] += parseInt(result.rows.item(i).meta);
                    }
-                   if(result.rows.item(i).telhas_produzidas=='' || result.rows.item(i).telhas_produzidas==null){
+                   if(result.rows.item(i).telhas_produzidas=='' || result.rows.item(i).telhas_produzidas==null || result.rows.item(i).telhas_produzidas=='undefined'){
                     atingido[0] += 0;
                 }else{
                     atingido[0] += parseInt(result.rows.item(i).telhas_produzidas);
                 }
                }else if(result.rows.item(i).turno==2){
-                   if(result.rows.item(i).meta=='' || result.rows.item(i).meta==null){
+                   if(result.rows.item(i).meta=='' || result.rows.item(i).meta==null || result.rows.item(i).meta=='undefined'){
                     metas[1] += 0;
                    }else{
                     metas[1] += parseInt(result.rows.item(i).meta);
                    }
-                    if(result.rows.item(i).telhas_produzidas=='' || result.rows.item(i).telhas_produzidas==null){
+                    if(result.rows.item(i).telhas_produzidas=='' || result.rows.item(i).telhas_produzidas==null || result.rows.item(i).telhas_produzidas=='undefined'){
                         atingido[1] += 0;
                     }else{
                         atingido[1] += parseInt(result.rows.item(i).telhas_produzidas);
                     }
                }else if(result.rows.item(i).turno==3){
-                if(result.rows.item(i).meta=='' || result.rows.item(i).meta==null){
+                if(result.rows.item(i).meta=='' || result.rows.item(i).meta==null || result.rows.item(i).meta=='undefined'){
                     metas[2] += 0;
                    }else{
                     metas[2] += parseInt(result.rows.item(i).meta);
                    }
-                   if(result.rows.item(i).telhas_produzidas=='' || result.rows.item(i).telhas_produzidas==null){
+                   if(result.rows.item(i).telhas_produzidas=='' || result.rows.item(i).telhas_produzidas==null || result.rows.item(i).telhas_produzidas=='undefined'){
                     atingido[2] += 0;
                 }else{
                     atingido[2] += parseInt(result.rows.item(i).telhas_produzidas);
-                }
+                } //console.log('t3 '+metas[2]);
                }
            }
            t1eficiencia = parseInt((atingido[0]/metas[0])*100);

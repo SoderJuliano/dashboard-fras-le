@@ -50,7 +50,7 @@
       <div class="sidebar-sticky pt-3">
         <ul class="nav flex-column">
           <li class="nav-item">
-            <a class="nav-link active" href="#">
+            <a id="dashboardHome" class="nav-link active" href="#">
               <span data-feather="home"></span>
               Dashboard <span class="sr-only">(current)</span>
             </a>
@@ -143,10 +143,11 @@
       <canvas class="my-4 w-100" id="myChartPizza" width="900" height="380"></canvas>
 
       <h2 id="title-dashboard">Section title</h2>
-      <div class="table-responsive">
+      <div id="tabela" class="table-responsive">
         <table class="table table-striped table-sm">
           <thead>
             <tr>
+			  <th>Turno</th>
               <th>Data</th>
               <th>Prensa</th>
               <th>Meta</th>
@@ -155,7 +156,7 @@
               <th>Material gasto</th>
             </tr>
           </thead>
-          <tbody id="table-data">
+		  <tbody class="table-data">
           </tbody>
         </table>
       </div>
@@ -170,8 +171,11 @@
 		<script src="DB.js"></script>
 		<script src="jquery-3.5.1.min.js"></script>
 		<script src="classes.js"></script>
-    <script>makeTable(getTurno());
-         
+    <script>
+			makeTable(getTurno());
+			 getTelhas(getData(), getVao(), getTurno(), 'line');
+            $("#myChartBar").hide();
+            $("#myChart").fadeIn();
           $('#btnLine').click(function(){
             getTelhas(getData(), getVao(), getTurno(), 'line');
             $("#myChartBar").hide();
@@ -183,15 +187,18 @@
             $("#myChartBar").fadeIn();
           });
           $("#myChartBar").hide();
-          $("#myChartPizza").hide();
-          $('select>option:eq(1)').attr('selected', true);
+		  $("#myChartPizza").hide();
+          $('select>option:eq(0)').attr('selected', true);
           $('#dbList').on('click',function(){
             $("#myChartBar").hide();
             $("#myChart").hide();
             eficienciaTurnos();
             todatabela();
-            $("#titulo").text("Eficiencia de cada turno");
+            $("#titulo").text("Eficiência de cada turno");
           });
+		  $("#dashboardHome").click(function(){
+			window.location.reload();
+		  })
         </script>
 		</body>
 </html>

@@ -110,3 +110,10 @@ var myChart = new Chart(ctx, {
     }
 });
 }
+function trColor(){
+	
+	$(".tr1").css("background-color", "rgba(54, 162, 235, 0.2)");
+	$(".tr2").css("background-color", "rgba(255, 206, 86, 0.2)");
+	$(".tr3").css("background-color", "rgba(255, 000, 64, 0.2)");
+	
+}
