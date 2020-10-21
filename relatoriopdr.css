@@ -1,0 +1,16 @@
+.head{
+    width: 100vw; 
+    height: 10vh; 
+	background-color: #F8F8FF;
+}
+.lateral-esquerdo{
+	margin-top: 100px;
+	margin-left: 50px;
+}
+.div-1{
+	background-color: #F8F8FF;
+	width: 300px;
+	height: 100px;
+	overflow: block;
+	border-radius: 25px;
+}

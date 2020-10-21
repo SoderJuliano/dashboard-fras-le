@@ -354,3 +354,75 @@ db.transaction(function(transaction){
     );
 });
 }
+function paradasDiaDesempenho(dia){
+	var db = openDatabase("Prensas", "1.0", "Prensas Siblo Web SQL Database", 200000*1024); 
+	db.transaction(function(transaction){
+    transaction.executeSql(
+        "SELECT * FROM Paradas WHERE dia=?",[dia],
+        function(transaction, result){
+            console.log('consulta realizada!'); 
+			let nulos = 0;
+			let outros = 0;
+			let mParadas = [];
+			let tabela = "";
+			$("#title-dashboard").text("Relatório de paradas");
+			tabela += "<table class='table table-striped table-sm'><thead><tr>";
+			tabela += "<th>Turnos</th><th>Data</th><th>Prensa</th><th>parada</th><th>hora</th><th>perda/%/parada</th><th>perda em telhas/paradas</th>";
+			tabela += "</tr></thead>";
+			tabela += "<tbody>";
+			let iFim = 0;
+           for(var i = 0; i < result.rows.length; i++){
+            let x = result.rows.item(i).descricao.split("//");
+			let y = result.rows.item(i).hora.split("//");
+			if(x.length>1){
+				$.each(x, function(index, value){
+					outros++;
+					if(!mParadas.includes(result.rows.item(i).maquina)){
+						mParadas.push(result.rows.item(i).maquina);
+					}
+					tabela += "<tr>";
+					tabela += "<td class='tr"+result.rows.item(i).turno+"'>"+result.rows.item(i).turno+"</td>";
+					tabela += "<td>"+result.rows.item(i).dia+"</td>";
+					tabela += "<td>"+result.rows.item(i).maquina+"</td>";
+					tabela += "<td>"+value+"</td>";
+					tabela += "<td>"+y[index]+"</td>";
+					tabela += "<td id='perdaIrog'>0</td>";
+					tabela += "<td id='perdaTelhas'>0</td>";
+				});
+			}else{
+				if(result.rows.item(i).descricao == "nulo"){
+					nulos++;
+				}else{
+					outros++;
+					if(!mParadas.includes(result.rows.item(i).maquina)){
+						mParadas.push(result.rows.item(i).maquina);
+					}
+				}
+				tabela += "<tr>";
+				tabela += "<td class='tr"+result.rows.item(i).turno+"'>"+result.rows.item(i).turno+"</td>";
+				tabela += "<td>"+result.rows.item(i).dia+"</td>";
+				tabela += "<td>"+result.rows.item(i).maquina+"</td>";
+				tabela += "<td>"+result.rows.item(i).descricao+"</td>";
+				tabela += "<td>"+result.rows.item(i).hora+"</td>";
+				tabela += "<td id='perdaIrog'>0</td>";
+				tabela += "<td id='perdaTelhas'>0</td>";
+			}					
+			tabela += "</tr>";
+			if(iFim==15){
+				tabela += "<tr class='trfim'><td class='trfim1' colspan='2'>total de paradas</td><td class='trfim1'>"+outros+"</td><td class='trfim' colspan='2'>não pararam</td><td>"+nulos+"</td><td>pararam</td><td>"+mParadas.length+"</td></tr>";
+				iFim=0;
+			}else{
+				iFim++;
+			}
+           }
+		   tabela += "</tbody></table>"; 
+		   $("#tabela").html(tabela);
+		   trColor();
+        },
+        function(transaction, error){
+            console.log('deu pau!');
+            console.log(error);
+        }
+    );
+});
+}
