@@ -126,23 +126,39 @@ db.transaction(function(transaction){
         function(transaction, result){
             console.log('deu certo!'); 
            // console.log(result);
+		   let cont = 0;
+		   let somaMetas = 0;
+		   let somaResultados = 0;
            for(var i = result.rows.length-1; i >= 0; i--){
-			   console.log(result.rows.item(i)['maquina']);
-			   // jquery
-                    if(result.rows.item(i).turno == turno && result.rows.item(i)['vao'] == getVao()){
-                                $("#title-dashboard").text("Produção turno "+turno+" vão "+getVao());
-                                $( ".table-data" ).append( "<tr>" );
-								$( ".table-data" ).append( "<td class='tr"+result.rows.item(i).turno+"'>"+result.rows.item(i).turno+"</td>");
-                                $( ".table-data" ).append( "<td>"+result.rows.item(i).dia+"</td>");
-								$( ".table-data" ).append( "<td>"+result.rows.item(i).maquina+"</td>" );
-								$( ".table-data" ).append( "<td>"+result.rows.item(i).meta+"</td>" );
-								$( ".table-data" ).append( "<td>"+result.rows.item(i).telhas_produzidas+"</td>" );
-								$( ".table-data" ).append( "<td>"+result.rows.item(i).pecas_produzidas+"</td>" );
-								$( ".table-data" ).append( "<td>"+result.rows.item(i).kg+"kg</td>" );
-								$( ".table-data" ).append( "</tr>" );
-                    }else{
-
-                    }
+                $("#title-dashboard").text("Produção turno "+turno+" vão "+getVao());
+                $( ".table-data" ).append( "<tr>" );
+				$( ".table-data" ).append( "<td class='tr"+result.rows.item(i).turno+"'>"+result.rows.item(i).turno+"</td>");
+                $( ".table-data" ).append( "<td>"+result.rows.item(i).dia+"</td>");
+				$( ".table-data" ).append( "<td>"+result.rows.item(i).maquina+"</td>" );
+				$( ".table-data" ).append( "<td>"+result.rows.item(i).meta+"</td>" );
+				if(parseInt(result.rows.item(i).meta)>0){
+					somaMetas += parseInt(result.rows.item(i).meta);
+				}else{
+					somaMetas += 0;
+				}
+				somaResultados += parseInt(result.rows.item(i).telhas_produzidas);
+				$( ".table-data" ).append( "<td>"+result.rows.item(i).telhas_produzidas+"</td>" );
+				$( ".table-data" ).append( "<td>"+result.rows.item(i).pecas_produzidas+"</td>" );
+				$( ".table-data" ).append( "<td>"+result.rows.item(i).kg+"kg</td>" );
+				$( ".table-data" ).append( "</tr>" );
+                if(cont==15){
+					$( ".table-data" ).append( "<tr>" );
+					$( ".table-data" ).append( "<td>"+result.rows.item(i).dia+"<td>" );
+					$( ".table-data" ).append( "<td>meta:"+somaMetas+"T<td>" );
+					$( ".table-data" ).append( "<td>resultado:"+somaResultados+"T<td>" );
+					
+					$( ".table-data" ).append( "</tr>" );
+					cont=0;
+					somaMetas=0;
+					somaResultados=0;
+				}else{
+					cont++;
+				}
            }
         },
         function(transaction, error){
@@ -213,11 +229,8 @@ function getTelhas(dia, vao, turno, tipo){
                 retorno.push(soma);
              }, null); 
     } 
-    if(tipo=='bar'){
         setGraph2(datas, retorno); 
-    }else{
         setGraph(datas, retorno);
-    }
 });
 }
 function producaoExiste(dia, vao, turno){ 
@@ -402,14 +415,22 @@ function paradasDiaDesempenho(dia){
 				tabela += "<td class='tr"+result.rows.item(i).turno+"'>"+result.rows.item(i).turno+"</td>";
 				tabela += "<td>"+result.rows.item(i).dia+"</td>";
 				tabela += "<td>"+result.rows.item(i).maquina+"</td>";
-				tabela += "<td>"+result.rows.item(i).descricao+"</td>";
-				tabela += "<td>"+result.rows.item(i).hora+"</td>";
+				if(result.rows.item(i).descricao=="nulo"){
+					tabela += "<td></td>";
+				}else{
+					tabela += "<td>"+result.rows.item(i).descricao+"</td>";
+				}
+				if(result.rows.item(i).hora=="nulo"){
+					tabela += "<td></td>";
+				}else{
+					tabela += "<td>"+result.rows.item(i).hora+"</td>";
+				}
 				tabela += "<td id='perdaIrog'>0</td>";
 				tabela += "<td id='perdaTelhas'>0</td>";
 			}					
 			tabela += "</tr>";
 			if(iFim==15){
-				tabela += "<tr class='trfim'><td class='trfim1' colspan='2'>total de paradas</td><td class='trfim1'>"+outros+"</td><td class='trfim' colspan='2'>não pararam</td><td>"+nulos+"</td><td>pararam</td><td>"+mParadas.length+"</td></tr>";
+				tabela += "<tr class='trfim'><td class='trfim1' colspan='2'>total de paradas -> "+outros+"</td><td class='trfim' colspan='2'>não pararam -> "+nulos+"</td><td>pararam -> "+mParadas.length+"</td></tr>";
 				iFim=0;
 			}else{
 				iFim++;

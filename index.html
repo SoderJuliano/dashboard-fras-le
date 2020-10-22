@@ -172,17 +172,15 @@
 		<script src="jquery-3.5.1.min.js"></script>
 		<script src="classes.js"></script>
     <script>
+			getTelhas(getData(), getVao(), getTurno(), 'line');
 			makeTable(getTurno());
-			 getTelhas(getData(), getVao(), getTurno(), 'line');
             $("#myChartBar").hide();
             $("#myChart").fadeIn();
           $('#btnLine').click(function(){
-            getTelhas(getData(), getVao(), getTurno(), 'line');
             $("#myChartBar").hide();
             $("#myChart").fadeIn();
           });
           $('#btnBar').click(function(){ 
-            getTelhas(getData(), getVao(), getTurno(), 'bar');
             $("#myChart").hide();
             $("#myChartBar").fadeIn();
           });
