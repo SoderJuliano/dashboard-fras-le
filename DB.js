@@ -399,10 +399,15 @@ function paradasDiaDesempenho(dia){
 					tabela += "<td>"+result.rows.item(i).maquina+"</td>";
 					tabela += "<td>"+value+"</td>";
 					tabela += "<td>"+y[index]+"</td>";
-					tabela += "<td id='perdaIrog'>0</td>";
-					tabela += "<td id='perdaTelhas'>0</td>";
+					tabela += "<td class='perdaIrog"+i+"'>0</td>";
+					tabela += "<td class='perdaTelhas"+i+"'>0</td>";
+					paradasDiaDesempenhoMaquina(dia, result.rows.item(i).vao, result.rows.item(i).turno, result.rows.item(i).maquina, x.length, i);
 				});
 			}else{
+				if((nulos+mParadas.length)>15){ // quando chega nas 16 máquinas é zerado as variáveis
+					nulos = 0;
+					mParadas = [];
+				}
 				if(result.rows.item(i).descricao == "nulo"){
 					nulos++;
 				}else{
@@ -425,8 +430,9 @@ function paradasDiaDesempenho(dia){
 				}else{
 					tabela += "<td>"+result.rows.item(i).hora+"</td>";
 				}
-				tabela += "<td id='perdaIrog'>0</td>";
-				tabela += "<td id='perdaTelhas'>0</td>";
+				tabela += "<td class='perdaIrog"+i+"'>0</td>";
+				tabela += "<td class='perdaTelhas"+i+"'>0</td>";
+				paradasDiaDesempenhoMaquina(dia, result.rows.item(i).vao, result.rows.item(i).turno, result.rows.item(i).maquina, x.length, i);
 			}					
 			tabela += "</tr>";
 			if(iFim==15){
@@ -445,5 +451,35 @@ function paradasDiaDesempenho(dia){
             console.log(error);
         }
     );
+});
+}
+function paradasDiaDesempenhoMaquina(dia, vao, turno, maquina, x, id){
+	var db = openDatabase("Prensas", "1.0", "Prensas Siblo Web SQL Database", 200000*1024); 
+	db.transaction(function(transaction){
+    transaction.executeSql(
+        "SELECT * FROM Producao WHERE dia=? and vao=? and turno=? and maquina=?",[dia, vao, turno, maquina],
+        function(transaction, result){
+			// cálculo de perca com cada parada em %
+			let telhas = parseInt(result.rows.item(0).telhas_produzidas);
+			let meta = parseInt(result.rows.item(0).meta);
+			let irog = parseInt((telhas/meta)*100);
+			irog = 100-irog;
+            let resultado = parseInt(irog/x);
+			let resultado2 = 0;
+			// cálculo de perda com cada parada em telhas
+			if(x>0){
+				resultado2 = parseInt((meta-telhas)/x); 
+			}else{
+				resultado2 = parseInt((meta-telhas));
+			}
+			
+			if(resultado>0){
+				$(".perdaIrog"+id).text(resultado+"%");
+				$(".perdaTelhas"+id).text(resultado2+" telhas");
+			}else{
+				$(".perdaIrog"+id).text("");
+				$(".perdaTelhas"+id).text("");
+			}
+});
 });
 }
