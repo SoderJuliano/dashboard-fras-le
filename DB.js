@@ -178,29 +178,37 @@ function getLastTurno(){
 function dataMenos(data, i){
     let d = data.split("/");
     let dia = parseInt(d[0])-i;
-    const mes = d[1];
+    let mes = d[1];
     const ano = d[2]; 
     switch (dia) {
         case 0:
             dia = 31;
+			mes = parseInt(d[1])-1;
           break;
         case -1:
             dia = 30;
+			mes = parseInt(d[1])-1;
           break;
         case -2:
             dia = 29;
+			mes = parseInt(d[1])-1;
           break;
         case -3:
             dia = 28;
+			mes = parseInt(d[1])-1;
           break;
         case -4:
             dia = 27;
+			mes = parseInt(d[1])-1;
           break;
         case -5:
             dia = 26;
+			mes = parseInt(d[1])-1;
           break;
         case  -6:
             dia = 25;
+			mes = parseInt(d[1])-1;
+		break;
       }
     return dia+"/"+mes+"/"+ano; 
 }
@@ -211,7 +219,7 @@ const mes = d[1];
 const ano = d[2];
 return mes+"/"+dia+"/"+ano;
 }
-function getTelhas(dia, vao, turno, tipo){ 
+function getTelhas(dia, vao, turno){ 
     var db = openDatabase("Prensas", "1.0", "Prensas Siblo Web SQL Database", 200000*1024); 
     db.transaction(function (tx) {
     let retorno =[];
@@ -231,6 +239,28 @@ function getTelhas(dia, vao, turno, tipo){
     } 
         setGraph2(datas, retorno); 
         setGraph(datas, retorno);
+});
+}
+function getTelhas30DIAS(dia, vao, turno){ 
+    var db = openDatabase("Prensas", "1.0", "Prensas Siblo Web SQL Database", 200000*1024); 
+    db.transaction(function (tx) {
+    let retorno =[];
+    let datas = [];
+        for(let x = 0; x<30; x++ ){ 
+            let soma = 0;
+            tx.executeSql('CREATE TABLE IF NOT EXISTS Producao (vao, turno, dia, maquina, meta, telhas_produzidas, pecas_produzidas, kg)');
+              tx.executeSql('SELECT * FROM Producao WHERE vao = ? AND turno=? AND dia=?', [vao, turno, dataMenos(dia, x)], function (tx, results) { 
+                var len = results.rows.length, i;
+			     for (i = 0; i < len; i++){
+                  //console.log(results.rows.item(i).dia);
+			      soma += parseInt(results.rows.item(i).telhas_produzidas);
+                } 
+                datas.push(dataMenos(dia, x));
+                retorno.push(soma);
+             }, null); 
+    } 
+        setGraph3(datas, retorno); 
+        setGraph4(datas, retorno);
 });
 }
 function producaoExiste(dia, vao, turno){ 
@@ -262,33 +292,15 @@ db.transaction(function(transaction){
 			tabela += "</tr></thead>";
 			tabela += "<tbody>";
            for(var i = 0; i < result.rows.length; i++){
-               //console.log(result.rows.item(i)['maquina']);
-			   // jquery
-			   /* <table class="table table-striped table-sm">
-          <thead>
-            <tr>
-			  <th>Turno</th>
-              <th>Data</th>
-              <th>Prensa</th>
-              <th>Meta</th>
-              <th>Realizado em telhas</th>
-              <th>Em peças</th>
-              <th>Material gasto</th>
-            </tr>
-          </thead>
-		  <tbody class="table-data">
-          </tbody>*/
-								
-                                
-									 tabela += "<tr>";
-									 tabela += "<td class='tr"+result.rows.item(i).turno+"'>"+result.rows.item(i).turno+"</td>";
-									 tabela += "<td>"+result.rows.item(i).dia+"</td>";
-									 tabela += "<td>"+result.rows.item(i).maquina+"</td>";
-									 tabela += "<td>"+result.rows.item(i).meta+"</td>";
-									 tabela += "<td>"+result.rows.item(i).telhas_produzidas+"</td>";
-									 tabela += "<td>"+result.rows.item(i).pecas_produzidas+"</td>";
-									 tabela += "<td>"+result.rows.item(i).kg+"kg</td>";
-									 tabela += "</tr>";
+                tabela += "<tr>";
+				tabela += "<td class='tr"+result.rows.item(i).turno+"'>"+result.rows.item(i).turno+"</td>";
+				tabela += "<td>"+result.rows.item(i).dia+"</td>";
+				tabela += "<td>"+result.rows.item(i).maquina+"</td>";
+				tabela += "<td>"+result.rows.item(i).meta+"</td>";
+				tabela += "<td>"+result.rows.item(i).telhas_produzidas+"</td>";
+				tabela += "<td>"+result.rows.item(i).pecas_produzidas+"</td>";
+				tabela += "<td>"+result.rows.item(i).kg+"kg</td>";
+				tabela += "</tr>";
            }
 		   tabela += "</tbody></table>"; 
 		   $("#tabela").html(tabela);

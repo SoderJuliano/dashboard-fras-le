@@ -130,7 +130,7 @@
             <button id="btnLine" type="button" class="btn btn-sm btn-outline-secondary">Linha</button>
             <button id="btnBar" type="button" class="btn btn-sm btn-outline-secondary">Barra</button>
           </div>
-            <select data-feather="calendar" class="btn btn-sm btn-outline-secondary dropdown-toggle">
+            <select id="filtroSelect">
               <option>ESTA SEMANA</option>
               <option>ESTE MÊS</option>
               <option>ESTE ANO</option>
@@ -140,6 +140,9 @@
 
       <canvas class="my-4 w-100" id="myChartBar" width="900" height="380"></canvas>
       <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
+	  <!-- 30 DIAS -->
+	  <canvas class="my-4 w-100" id="myChartBar30" width="950" height="380"></canvas>
+      <canvas class="my-4 w-100" id="myChart30" width="950" height="380"></canvas>
       <canvas class="my-4 w-100" id="myChartPizza" width="900" height="380"></canvas>
 
       <h2 id="title-dashboard">Section title</h2>
@@ -172,21 +175,69 @@
 		<script src="jquery-3.5.1.min.js"></script>
 		<script src="classes.js"></script>
     <script>
-			getTelhas(getData(), getVao(), getTurno(), 'line');
-			makeTable(getTurno());
-            $("#myChartBar").hide();
-            $("#myChart").fadeIn();
-          $('#btnLine').click(function(){
-            $("#myChartBar").hide();
-            $("#myChart").fadeIn();
-          });
-          $('#btnBar').click(function(){ 
-            $("#myChart").hide();
-            $("#myChartBar").fadeIn();
-          });
+		getTelhas(getData(), getVao(), getTurno());
+		getTelhas30DIAS(getData(), getVao(), getTurno());
+		makeTable(getTurno());
+          $("#myChartBar").hide();
+          $("#myChart").fadeIn();
+          $("#myChartBar30").hide();
+		  $("#myChart30").hide();
+		$('#btnLine').click(function(){
+		  $( "#filtroSelect option:selected" ).each(function() {
+			if($( this ).text()=="ESTA SEMANA"){// alert("bnt semana");
+					$("#myChart").fadeIn();
+					$("#myChart30").hide();
+					$("#myChartBar").hide();
+					$("#myChartBar").hide();
+				}else if($( this ).text()=="ESTE MÊS"){
+					$("#myChart").hide();
+					$("#myChart30").show();
+					$("#myChartBar30").hide();
+					$("#myChartBar").hide();
+				}
+			});
+		});
+		
+		$('#btnBar').click(function(){ 
+			$( "#filtroSelect option:selected" ).each(function() {
+				if($( this ).text()=="ESTA SEMANA"){//alert("bnt semana");
+					$("#myChart").hide();
+					$("#myChart30").hide();
+					$("#myChartBar").fadeIn();
+					$("#myChartBar30").hide();
+				}else if($( this ).text()=="ESTE MÊS"){ //alert("bnt mes");
+					$("#myChart").hide();
+					$("#myChart30").hide();
+					$("#myChartBar").hide();
+					$("#myChartBar30").fadeIn();
+				}
+			});
+        });
+		  // gráficos
           $("#myChartBar").hide();
 		  $("#myChartPizza").hide();
-          $('select>option:eq(0)').attr('selected', true);
+		  
+		  // select
+          $('#filtroSelect').attr('selected', true);
+		  $('#filtroSelect').change(function(){
+			$( "#filtroSelect option:selected" ).each(function() {
+				//alert($( this ).text());
+				if($( this ).text()=="ESTE MÊS"){
+					$("#myChart30").show();
+					$("#myChart").hide();
+					$("#myChartBar30").hide();
+					$("#myChartBar").hide();
+					$("#myChartPizza").hide();
+				}else if($( this ).text()=="ESTA SEMANA"){
+					$("#myChart30").hide();
+					$("#myChart").show();
+					$("#myChartBar30").hide();
+					$("#myChartPizza").hide();
+					$("#myChartBar").hide();
+				}
+			});
+		  }); 
+		  // listas & graficos
           $('#dbList').on('click',function(){
             $("#myChartBar").hide();
             $("#myChart").hide();
@@ -194,12 +245,16 @@
             todatabela();
             $("#titulo").text("Eficiência de cada turno");
           });
+		  
+		  // botão home
 		  $("#dashboardHome").click(function(){
 			window.location.reload();
-		  })
+		  });
+		  // botão paradas
 		  $("#relatorioParadas").click(function(){
 			paradasDiaDesempenho(getData());
 		  });
+		  
         </script>
 		</body>
 </html>

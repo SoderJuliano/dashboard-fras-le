@@ -108,6 +108,83 @@ var myChart = new Chart(ctx, {
     }
 });
 }
+// 30 DIAS
+
+function setGraph3(datas, somas){ 
+  (function () {
+    'use strict'
+  
+    feather.replace()
+  
+    // Graphs
+    var ctx = document.getElementById('myChart30')
+    // eslint-disable-next-line no-unused-vars
+    var myChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: datas,
+        datasets: [{
+          data: somas,
+          lineTension: 0,
+          backgroundColor: 'transparent',
+          borderColor: '#007bff',
+          borderWidth: 4,
+          pointBackgroundColor: '#007bff'
+        }]
+      },
+      options: {
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: false
+            }
+          }]
+        },
+        legend: {
+          display: false
+        }
+      }
+    })
+  }()) 
+}
+function setGraph4(datas, somas){ 
+  (function () {
+    'use strict'
+  
+    feather.replace()
+  
+    // Graphs
+    var ctx = document.getElementById('myChartBar30')
+    // eslint-disable-next-line no-unused-vars
+    var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: datas,
+        datasets: [{
+          data: somas,
+          lineTension: 0,
+          backgroundColor: 'transparent',
+          borderColor: '#007bff',
+          borderWidth: 4,
+          pointBackgroundColor: '#007bff'
+        }]
+      },
+      options: {
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: false
+            }
+          }]
+        },
+        legend: {
+          display: false
+        }
+      }
+    })
+  }()) 
+}
+
 function trColor(){
 	
 	$(".tr1").css("background-color", "rgba(54, 162, 235, 0.2)");
