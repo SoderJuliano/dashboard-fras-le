@@ -144,7 +144,9 @@
 	  <canvas class="my-4 w-100" id="myChartBar30" width="950" height="380"></canvas>
       <canvas class="my-4 w-100" id="myChart30" width="950" height="380"></canvas>
       <canvas class="my-4 w-100" id="myChartPizza" width="900" height="380"></canvas>
-
+      <canvas class="my-4 w-100" id="GraphOfTheYearBar" width="900" height="380"></canvas>
+      <canvas class="my-4 w-100" id="GraphOfTheYearLine" width="900" height="380"></canvas>
+      
       <h2 id="title-dashboard">Section title</h2>
       <div id="tabela" class="table-responsive">
         <table class="table table-striped table-sm">
@@ -181,7 +183,9 @@
           $("#myChartBar").hide();
           $("#myChart").fadeIn();
           $("#myChartBar30").hide();
-		  $("#myChart30").hide();
+          $("#myChart30").hide();
+          $("#GraphOfTheYearBar").hide();
+          $("#GraphOfTheYearLine").hide();
 		$('#btnLine').click(function(){
 		  $( "#filtroSelect option:selected" ).each(function() {
 			if($( this ).text()=="ESTA SEMANA"){// alert("bnt semana");
@@ -194,7 +198,14 @@
 					$("#myChart30").show();
 					$("#myChartBar30").hide();
 					$("#myChartBar").hide();
-				}
+				}else if($( this ).text()=="ESTE ANO"){
+          $("#GraphOfTheYearBar").hide();
+          $("#GraphOfTheYearLine").show();
+          $("#myChart").hide();
+					$("#myChart30").hide();
+					$("#myChartBar").hide();
+					$("#myChartBar30").hide();
+        }
 			});
 		});
 		
@@ -205,12 +216,19 @@
 					$("#myChart30").hide();
 					$("#myChartBar").fadeIn();
 					$("#myChartBar30").hide();
-				}else if($( this ).text()=="ESTE MÊS"){ //alert("bnt mes");
+				}else if($( this ).text()=="ESTE MÊS"){ 
 					$("#myChart").hide();
 					$("#myChart30").hide();
 					$("#myChartBar").hide();
 					$("#myChartBar30").fadeIn();
-				}
+				}else if($( this ).text()=="ESTE ANO"){
+          $("#GraphOfTheYearBar").fadeIn();
+          $("#GraphOfTheYearLine").hide();
+          $("#myChart").hide();
+					$("#myChart30").hide();
+					$("#myChartBar").hide();
+					$("#myChartBar30").hide();
+        }
 			});
         });
 		  // gráficos
@@ -234,6 +252,14 @@
 					$("#myChartBar30").hide();
 					$("#myChartPizza").hide();
 					$("#myChartBar").hide();
+				}else if($( this ).text()=="ESTE ANO"){
+					$("#myChart30").hide();
+					$("#myChart").hide();
+					$("#myChartBar30").hide();
+					$("#myChartPizza").hide();
+          $("#myChartBar").hide();
+          $("#GraphOfTheYearLine").show();
+          $("#GraphOfTheYearBar").hide();
 				}
 			});
 		  }); 
@@ -254,7 +280,7 @@
 		  $("#relatorioParadas").click(function(){
 			paradasDiaDesempenho(getData());
 		  });
-		  
+		  producaoAnoGrafico(getVao(),getTurno());
         </script>
 		</body>
 </html>

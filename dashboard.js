@@ -184,7 +184,82 @@ function setGraph4(datas, somas){
     })
   }()) 
 }
-
+function GraphOfTheYearBar(somas){ 
+  (function () {
+    'use strict'
+  
+    feather.replace()
+  
+    // Graphs
+    var ctx = document.getElementById('GraphOfTheYearBar')
+    // eslint-disable-next-line no-unused-vars
+    let datas = ["JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO", "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"];
+    var myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: datas,
+        datasets: [{
+          data: somas,
+          lineTension: 0,
+          backgroundColor: 'transparent',
+          borderColor: '#007bff',
+          borderWidth: 4,
+          pointBackgroundColor: '#007bff'
+        }]
+      },
+      options: {
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: false
+            }
+          }]
+        },
+        legend: {
+          display: false
+        }
+      }
+    })
+  }()) 
+}
+function GraphOfTheYearLine(somas){ 
+  (function () {
+    'use strict'
+  
+    feather.replace()
+  
+    // Graphs
+    var ctx = document.getElementById('GraphOfTheYearLine')
+    // eslint-disable-next-line no-unused-vars
+    let datas = ["JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO", "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"];
+    var myChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: datas,
+        datasets: [{
+          data: somas,
+          lineTension: 0,
+          backgroundColor: 'transparent',
+          borderColor: '#007bff',
+          borderWidth: 4,
+          pointBackgroundColor: '#007bff'
+        }]
+      },
+      options: {
+        scales: {
+          yAxes: [{
+            ticks: {
+              beginAtZero: false
+            }
+          }]
+        },
+        legend: {
+          display: false
+        }
+      }
+    })
+  }()) 
+}
 function trColor(){
 	
 	$(".tr1").css("background-color", "rgba(54, 162, 235, 0.2)");

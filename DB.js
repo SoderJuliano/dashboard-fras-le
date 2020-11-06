@@ -495,3 +495,76 @@ function paradasDiaDesempenhoMaquina(dia, vao, turno, maquina, x, id){
 });
 });
 }
+function producaoAnoGrafico(vao, turno){
+	var db = openDatabase("Prensas", "1.0", "Prensas Siblo Web SQL Database", 200000*1024); 
+	db.transaction(function(transaction){
+    transaction.executeSql(
+        "SELECT * FROM Producao WHERE vao=? and turno=?",[vao, turno],
+        function(transaction, result){
+            
+            //data do ano atual
+            let data = getData();
+            let ano = data.split("/")[2];
+            //console.log(ano);
+
+            //ano das datas salvas
+            let dataBanco;
+            let anoBanco;
+            let mes;
+            let meses = [];
+            let janeiro=0, fevereiro=0, marco=0, abril=0, maio=0, junho=0, julho=0, agosto=0, setembro=0, outubro=0, novembro = 0, dezembro = 0;
+
+            for(var i = 0; i < result.rows.length; i++){
+                dataBanco = result.rows.item(i).dia; 
+                anoBanco = dataBanco.split("/")[2];
+                mes = parseInt(dataBanco.split("/")[1]); 
+                if(anoBanco==ano){
+                    switch (mes) {
+                        case 1:
+                            janeiro += parseInt(result.rows.item(i).telhas_produzidas);
+                            break;
+                        case 2:
+                            fevereiro += parseInt(result.rows.item(i).telhas_produzidas);
+                            break;
+                        case 3:
+                            marco += parseInt(result.rows.item(i).telhas_produzidas);
+                            break;
+                        case 4:
+                            abril += parseInt(result.rows.item(i).telhas_produzidas);
+                            break;
+                        case 5:
+                            maio += parseInt(result.rows.item(i).telhas_produzidas);
+                            break;
+                        case 6:
+                            junho += parseInt(result.rows.item(i).telhas_produzidas);
+                            break;
+                        case 7:
+                            julho += parseInt(result.rows.item(i).telhas_produzidas);
+                            break;
+                        case 8:
+                            agosto += parseInt(result.rows.item(i).telhas_produzidas);
+                            break;
+                        case 9:
+                            setembro += parseInt(result.rows.item(i).telhas_produzidas);
+                            break;
+                        case 10: 
+                            outubro += parseInt(result.rows.item(i).telhas_produzidas);
+                            break;
+                        case 11:
+                            novembro += parseInt(result.rows.item(i).telhas_produzidas);
+                            break;
+                        case 12:
+                            dezembro += parseInt(result.rows.item(i).telhas_produzidas);
+                            break;
+                    }
+                }
+            }
+            meses.push(janeiro);meses.push(fevereiro);meses.push(marco);meses.push(abril);meses.push(maio);meses.push(junho);
+            meses.push(julho);meses.push(agosto);meses.push(setembro);meses.push(outubro);meses.push(novembro);meses.push(dezembro);
+            console.log(meses);
+            GraphOfTheYearBar(meses);
+            GraphOfTheYearLine(meses);
+        }
+    );
+});
+}
