@@ -178,12 +178,11 @@ function getLastTurno(){
 function dataMenos(data, i){
     let d = data.split("/");
     let dia = parseInt(d[0])-i;
-    let mes = d[1];
+    const mes = d[1];
     const ano = d[2]; 
     switch (dia) {
         case 0:
             dia = 31;
-			mes = parseInt(d[1])-1;
           break;
         case -1:
             dia = 30;
@@ -208,7 +207,6 @@ function dataMenos(data, i){
         case  -6:
             dia = 25;
 			mes = parseInt(d[1])-1;
-		break;
       }
     return dia+"/"+mes+"/"+ano; 
 }
@@ -292,15 +290,15 @@ db.transaction(function(transaction){
 			tabela += "</tr></thead>";
 			tabela += "<tbody>";
            for(var i = 0; i < result.rows.length; i++){
-                tabela += "<tr>";
-				tabela += "<td class='tr"+result.rows.item(i).turno+"'>"+result.rows.item(i).turno+"</td>";
-				tabela += "<td>"+result.rows.item(i).dia+"</td>";
-				tabela += "<td>"+result.rows.item(i).maquina+"</td>";
-				tabela += "<td>"+result.rows.item(i).meta+"</td>";
-				tabela += "<td>"+result.rows.item(i).telhas_produzidas+"</td>";
-				tabela += "<td>"+result.rows.item(i).pecas_produzidas+"</td>";
-				tabela += "<td>"+result.rows.item(i).kg+"kg</td>";
-				tabela += "</tr>";
+            						 tabela += "<tr>";
+									 tabela += "<td class='tr"+result.rows.item(i).turno+"'>"+result.rows.item(i).turno+"</td>";
+									 tabela += "<td>"+result.rows.item(i).dia+"</td>";
+									 tabela += "<td>"+result.rows.item(i).maquina+"</td>";
+									 tabela += "<td>"+result.rows.item(i).meta+"</td>";
+									 tabela += "<td>"+result.rows.item(i).telhas_produzidas+"</td>";
+									 tabela += "<td>"+result.rows.item(i).pecas_produzidas+"</td>";
+									 tabela += "<td>"+result.rows.item(i).kg+"kg</td>";
+									 tabela += "</tr>";
            }
 		   tabela += "</tbody></table>"; 
 		   $("#tabela").html(tabela);
@@ -495,76 +493,38 @@ function paradasDiaDesempenhoMaquina(dia, vao, turno, maquina, x, id){
 });
 });
 }
-function producaoAnoGrafico(vao, turno){
-	var db = openDatabase("Prensas", "1.0", "Prensas Siblo Web SQL Database", 200000*1024); 
+function exportarDataBase(){
+var db = openDatabase("Prensas", "1.0", "Prensas Siblo Web SQL Database", 200000*1024); 
+	let tudo = [];
+	let stringJSInicio = "dataBaseProducao"+vao+"=[";
+	let stringJSFim = "];";
+	let stringTotal= "";
 	db.transaction(function(transaction){
     transaction.executeSql(
-        "SELECT * FROM Producao WHERE vao=? and turno=?",[vao, turno],
+        "SELECT * FROM Producao",[],
         function(transaction, result){
-            
-            //data do ano atual
-            let data = getData();
-            let ano = data.split("/")[2];
-            //console.log(ano);
-
-            //ano das datas salvas
-            let dataBanco;
-            let anoBanco;
-            let mes;
-            let meses = [];
-            let janeiro=0, fevereiro=0, marco=0, abril=0, maio=0, junho=0, julho=0, agosto=0, setembro=0, outubro=0, novembro = 0, dezembro = 0;
-
-            for(var i = 0; i < result.rows.length; i++){
-                dataBanco = result.rows.item(i).dia; 
-                anoBanco = dataBanco.split("/")[2];
-                mes = parseInt(dataBanco.split("/")[1]); 
-                if(anoBanco==ano){
-                    switch (mes) {
-                        case 1:
-                            janeiro += parseInt(result.rows.item(i).telhas_produzidas);
-                            break;
-                        case 2:
-                            fevereiro += parseInt(result.rows.item(i).telhas_produzidas);
-                            break;
-                        case 3:
-                            marco += parseInt(result.rows.item(i).telhas_produzidas);
-                            break;
-                        case 4:
-                            abril += parseInt(result.rows.item(i).telhas_produzidas);
-                            break;
-                        case 5:
-                            maio += parseInt(result.rows.item(i).telhas_produzidas);
-                            break;
-                        case 6:
-                            junho += parseInt(result.rows.item(i).telhas_produzidas);
-                            break;
-                        case 7:
-                            julho += parseInt(result.rows.item(i).telhas_produzidas);
-                            break;
-                        case 8:
-                            agosto += parseInt(result.rows.item(i).telhas_produzidas);
-                            break;
-                        case 9:
-                            setembro += parseInt(result.rows.item(i).telhas_produzidas);
-                            break;
-                        case 10: 
-                            outubro += parseInt(result.rows.item(i).telhas_produzidas);
-                            break;
-                        case 11:
-                            novembro += parseInt(result.rows.item(i).telhas_produzidas);
-                            break;
-                        case 12:
-                            dezembro += parseInt(result.rows.item(i).telhas_produzidas);
-                            break;
-                    }
-                }
-            }
-            meses.push(janeiro);meses.push(fevereiro);meses.push(marco);meses.push(abril);meses.push(maio);meses.push(junho);
-            meses.push(julho);meses.push(agosto);meses.push(setembro);meses.push(outubro);meses.push(novembro);meses.push(dezembro);
-            console.log(meses);
-            GraphOfTheYearBar(meses);
-            GraphOfTheYearLine(meses);
-        }
-    );
-});
+			console.log("exportar");
+			for(var i = 0; i < result.rows.length; i++){
+				let producaoDia = [];
+				producaoDia.push(result.rows.item(i).vao);
+				producaoDia.push(result.rows.item(i).turno);
+				producaoDia.push(result.rows.item(i).dia);
+				producaoDia.push(result.rows.item(i).maquina);
+				producaoDia.push(result.rows.item(i).meta);
+				producaoDia.push(result.rows.item(i).telhas_produzidas);
+				producaoDia.push(result.rows.item(i).pecas_produzidas);
+				producaoDia.push(result.rows.item(i).kg);
+				tudo.push(producaoDia);
+				if(i==0){
+					stringJSInicio+="["+tudo[i]+"]";
+				}else{
+					stringJSInicio+=",["+tudo[i]+"]";
+				}
+			} 
+			stringTotal = stringJSInicio+""+stringJSFim;
+			console.log(stringTotal);
+			var blob = new Blob([stringTotal], {type: "application/json;utf - 8"});
+			saveAs(blob, "dataBaseProducao_vao"+vao+"_turno"+getTurno()+"_dia"+getData()+".js");
+		}); 
+	});
 }
