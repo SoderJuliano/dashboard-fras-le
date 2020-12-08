@@ -168,6 +168,60 @@ db.transaction(function(transaction){
     );
 });
 }
+// refaz a tabela assima caso der erro utilizando parseInt()
+
+function makeTableParse(turno){ 
+ var db = openDatabase("Prensas", "1.0", "Prensas Siblo Web SQL Database", 200000*1024); 
+db.transaction(function(transaction){
+    transaction.executeSql(
+        "SELECT * FROM Producao WHERE turno = ? AND vao = ?",
+        [parseInt(turno), parseInt(getVao())],
+        function(transaction, result){
+            console.log('deu certo!'); 
+           // console.log(result);
+		   let cont = 0;
+		   let somaMetas = 0;
+		   let somaResultados = 0;
+           for(var i = result.rows.length-1; i >= 0; i--){
+                $("#title-dashboard").text("Produção turno "+turno+" vão "+getVao());
+                $( ".table-data" ).append( "<tr>" );
+				$( ".table-data" ).append( "<td class='tr"+result.rows.item(i).turno+"'>"+result.rows.item(i).turno+"</td>");
+                $( ".table-data" ).append( "<td>"+result.rows.item(i).dia+"</td>");
+				$( ".table-data" ).append( "<td>"+result.rows.item(i).maquina+"</td>" );
+				$( ".table-data" ).append( "<td>"+result.rows.item(i).meta+"</td>" );
+				if(parseInt(result.rows.item(i).meta)>0){
+					somaMetas += parseInt(result.rows.item(i).meta);
+				}else{
+					somaMetas += 0;
+				}
+				somaResultados += parseInt(result.rows.item(i).telhas_produzidas);
+				$( ".table-data" ).append( "<td>"+result.rows.item(i).telhas_produzidas+"</td>" );
+				$( ".table-data" ).append( "<td>"+result.rows.item(i).pecas_produzidas+"</td>" );
+				$( ".table-data" ).append( "<td>"+result.rows.item(i).kg+"kg</td>" );
+				$( ".table-data" ).append( "</tr>" );
+                if(cont==15){
+					$( ".table-data" ).append( "<tr>" );
+					$( ".table-data" ).append( "<td>"+result.rows.item(i).dia+"<td>" );
+					$( ".table-data" ).append( "<td>meta:"+somaMetas+"T<td>" );
+					$( ".table-data" ).append( "<td>resultado:"+somaResultados+"T<td>" );
+					
+					$( ".table-data" ).append( "</tr>" );
+					cont=0;
+					somaMetas=0;
+					somaResultados=0;
+				}else{
+					cont++;
+				}
+           }
+        },
+        function(transaction, error){
+            console.log('deu pau!');
+            console.log(error);
+        }
+    );
+});
+}
+
 function getLastTurno(){
     if((getTurno()-1)<=0){
         return 3;
@@ -571,12 +625,10 @@ function producaoAnoGrafico(vao, turno){
     );
 });
 }
-function exportarDataBase(){
-var db = openDatabase("Prensas", "1.0", "Prensas Siblo Web SQL Database", 200000*1024); 
+function exportarDataBase(vao){
+	var db = openDatabase("Prensas", "1.0", "Prensas Siblo Web SQL Database", 200000*1024); 
 	let tudo = [];
-	let stringJSInicio = "dataBaseProducao"+vao+"=[";
-	let stringJSFim = "];";
-	let stringTotal= "";
+	let string="";
 	db.transaction(function(transaction){
     transaction.executeSql(
         "SELECT * FROM Producao",[],
@@ -588,21 +640,56 @@ var db = openDatabase("Prensas", "1.0", "Prensas Siblo Web SQL Database", 200000
 				producaoDia.push(result.rows.item(i).turno);
 				producaoDia.push(result.rows.item(i).dia);
 				producaoDia.push(result.rows.item(i).maquina);
-				producaoDia.push(result.rows.item(i).meta);
+				if(result.rows.item(i).meta=="NaN" || result.rows.item(i).meta==null){
+					producaoDia.push(0);
+				}else{
+					producaoDia.push(result.rows.item(i).meta);
+				}
 				producaoDia.push(result.rows.item(i).telhas_produzidas);
 				producaoDia.push(result.rows.item(i).pecas_produzidas);
 				producaoDia.push(result.rows.item(i).kg);
 				tudo.push(producaoDia);
 				if(i==0){
-					stringJSInicio+="["+tudo[i]+"]";
+					string+= tudo[i]+"";
 				}else{
-					stringJSInicio+=",["+tudo[i]+"]";
+					string+= ";"+tudo[i];
 				}
 			} 
-			stringTotal = stringJSInicio+""+stringJSFim;
-			console.log(stringTotal);
-			var blob = new Blob([stringTotal], {type: "application/json;utf - 8"});
-			saveAs(blob, "dataBaseProducao_vao"+vao+"_turno"+getTurno()+"_dia"+getData()+".js");
+			localStorage.setItem("salvoTxt", getData()+getVao()+getTurno());
+			var blob = new Blob([string], {type: "application/json;utf - 8"});
+			saveAs(blob, "dataBaseProducao_vao"+vao+"_turno"+getTurno()+"_dia"+getData()+".txt");
+		}); 
+	});
+}
+function updateDataBaseFromArchive(producao){
+	var db = openDatabase("Prensas", "1.0", "Prensas Siblo Web SQL Database", 200000*1024); 
+	let dia = producao.split(",")[2].trim();
+	let vao = parseInt(producao.split(",")[0]);
+	let turno = parseInt(producao.split(",")[1]);
+	let maquina = parseInt(producao.split(",")[3]); 
+	let meta = parseInt(producao.split(",")[4]); 
+	if(meta=="NaN" || meta==null){
+		meta='';
+	}
+	let telhas = parseInt(producao.split(",")[5]); 
+	let pecas = parseInt(producao.split(",")[6]); 
+	let kg = parseInt(producao.split(",")[7]); 
+	db.transaction(function(transaction){
+    transaction.executeSql(
+        "SELECT * FROM Producao WHERE dia=? and turno=?",[dia, turno],
+        function(transaction, result){
+			if(result.rows.length>0){
+				if(result.rows.item(0).maquina==maquina){
+					upDateProducao(turno, vao,dia,maquina, meta, telhas, pecas, kg);
+					console.log("atualizado"+dia);
+				}else{
+					setProducao(turno, vao,dia,maquina, meta, telhas, pecas, kg);
+					console.log("setado "+dia);
+				}
+			}else{
+				setProducao(turno, vao,dia,maquina, meta, telhas, pecas, kg);
+				console.log("setado");
+			}
 		}); 
 	});
 }
