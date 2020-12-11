@@ -281,7 +281,7 @@ function getTelhas(dia, vao, turno){
         for(let x = 0; x<7; x++ ){ 
             let soma = 0;
             tx.executeSql('CREATE TABLE IF NOT EXISTS Producao (vao, turno, dia, maquina, meta, telhas_produzidas, pecas_produzidas, kg)');
-              tx.executeSql('SELECT * FROM Producao WHERE vao = ? AND turno=? AND dia=?', [vao, turno, dataMenos(dia, x)], function (tx, results) { 
+              tx.executeSql('SELECT * FROM Producao WHERE vao = ? AND turno=? AND dia=?', [parseInt(vao), parseInt(turno), dataMenos(dia, x)], function (tx, results) { 
                 var len = results.rows.length, i;
 			     for (i = 0; i < len; i++){
                   //console.log(results.rows.item(i).dia);
@@ -303,7 +303,7 @@ function getTelhas30DIAS(dia, vao, turno){
         for(let x = 0; x<30; x++ ){ 
             let soma = 0;
             tx.executeSql('CREATE TABLE IF NOT EXISTS Producao (vao, turno, dia, maquina, meta, telhas_produzidas, pecas_produzidas, kg)');
-              tx.executeSql('SELECT * FROM Producao WHERE vao = ? AND turno=? AND dia=?', [vao, turno, dataMenos(dia, x)], function (tx, results) { 
+              tx.executeSql('SELECT * FROM Producao WHERE vao = ? AND turno=? AND dia=?', [parseInt(vao), parseInt(turno), dataMenos(dia, x)], function (tx, results) { 
                 var len = results.rows.length, i;
 			     for (i = 0; i < len; i++){
                   //console.log(results.rows.item(i).dia);
@@ -557,7 +557,7 @@ function producaoAnoGrafico(vao, turno){
 	let stringTotal= "";
 	db.transaction(function(transaction){
     transaction.executeSql(
-        "SELECT * FROM Producao WHERE vao=? and turno=?",[vao, turno],
+        "SELECT * FROM Producao WHERE vao=? and turno=?",[parseInt(vao), parseInt(turno)],
         function(transaction, result){
             //data do ano atual
             let data = getData();
@@ -667,9 +667,9 @@ function updateDataBaseFromArchive(producao){
 	let vao = parseInt(producao.split(",")[0]);
 	let turno = parseInt(producao.split(",")[1]);
 	let maquina = parseInt(producao.split(",")[3]); 
-	let meta = parseInt(producao.split(",")[4]); 
-	if(meta=="NaN" || meta==null){
-		meta='';
+	let meta= parseInt(producao.split(",")[4]);
+	if(parseInt(producao.split(",")[4])=="NaN" || parseInt(producao.split(",")[4])==null){
+		meta='0';
 	}
 	let telhas = parseInt(producao.split(",")[5]); 
 	let pecas = parseInt(producao.split(",")[6]); 
@@ -678,7 +678,7 @@ function updateDataBaseFromArchive(producao){
     transaction.executeSql(
         "SELECT * FROM Producao WHERE dia=? and turno=?",[dia, turno],
         function(transaction, result){
-			if(result.rows.length>0){
+			if(result.rows.length>0){ 
 				if(result.rows.item(0).maquina==maquina){
 					upDateProducao(turno, vao,dia,maquina, meta, telhas, pecas, kg);
 					console.log("atualizado"+dia);

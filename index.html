@@ -6,7 +6,7 @@
     <meta name="description" content="production report">
     <meta name="author" content="Juliano Soder, Fras-le SA">
     <meta name="generator" content="Jekyll v4.1.1">
-    <title>Dashboard </title>
+    <title>Dashboard Template · Bootstrap</title>
 
     <!-- Bootstrap core CSS -->
 <link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -36,14 +36,14 @@
   <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-toggle="collapse" data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-  <select id='vao' style='width: 70px;'>
+   <select id='vao' style='width: 70px;'>
    <option id='defaut'>VÃO</option> 
   <option value='1'>VÃO 1</option> 
   <option value='2'>VÃO 2</option> 
   <option value='3'>VÃO 3</option> 
   <option value='4'>VÃO 4</option> 
 </select>
-  <ul class="navbar-nav px-3">
+   <ul class="navbar-nav px-3">
     <li class="nav-item text-nowrap">
 	   <a class="nav-link" href="#">Atualizar Banco de Dados<input type="file" onchange="readFile(this)"></a>
     </li>
@@ -174,8 +174,10 @@
     </main>
   </div>
 </div>
+<div id="loading">Carregando</div>
 <script src="jquery-3.5.1.min.js"></script>
-      <script>window.jQuery || document.write('<script src="../assets/js/vendor/jquery.slim.min.js"><\/script>')</script><script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
+      <script>window.jQuery || document.write('<script src="../assets/js/vendor/jquery.slim.min.js"><\/script>')</script>
+	  <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
         <script src="feather.min.js"></script>
         <script src="Chart.min.js"></script>
         <script src="dashboard.js"></script>
@@ -183,15 +185,13 @@
 		<script src="jquery-3.5.1.min.js"></script>
 		<script src="classes.js"></script>
     <script>
+	$("#loading").hide();
 	$("#defaut").text("VÃO "+localStorage.getItem("vao"));
-	 $("#vao").change(function(){
-				var vao = $(this).val();
-				localStorage.setItem("vao", vao);
-				window.location.href = 'index.html';
-	});
 		getTelhas(getData(), getVao(), getTurno()); 
 		getTelhas30DIAS(getData(), getVao(), getTurno()); 
-		makeTable(getTurno());  makeTableParse(getTurno());
+		producaoAnoGrafico(getVao(),getTurno());
+		//makeTable(getTurno());  
+		makeTableParse(getTurno());
           $("#myChartBar").hide();
           $("#myChart").fadeIn();
           $("#myChartBar30").hide();
@@ -296,9 +296,10 @@
 		  $("#relatorioParadas").click(function(){
 			paradasDiaDesempenho(getData());
 		  });
-		  producaoAnoGrafico(getVao(),getTurno());
 		  // file reader
 		 function readFile(input) {
+					//$("#pagina").hide();
+					$("#loading").show();
 				  let file = input.files[0];
 
 				  let reader = new FileReader();
@@ -306,18 +307,27 @@
 				  reader.readAsText(file);
 
 				  reader.onload = function() {
+						$("#loading").show();
 						let resultado = [];
 						resultado = reader.result.split(";");
-						updateDataBaseFromArchive(resultado[0]);
+						
+						console.log("são "+resultado.length+" registros");
 						$.each( resultado, function( key, value ) {
 						  updateDataBaseFromArchive(value);
 						});
+					$("#loading").hide();
 				  };
+
 
 				  reader.onerror = function() {
 					console.log(reader.error);
 				  };
 		}
+		$("#vao").on('change',function(){
+			let optionValue = $(this).val();
+			localStorage.setItem("vao", optionValue);
+			window.location.reload();
+		});
         </script>
 		</body>
 </html>

@@ -3,8 +3,6 @@ function setGraph(datas, somas){
 (function () {
   'use strict'
 
-  feather.replace()
-
   // Graphs
   var ctx = document.getElementById('myChart')
   // eslint-disable-next-line no-unused-vars
@@ -39,8 +37,6 @@ function setGraph(datas, somas){
 function setGraph2(datas, somas){ 
   (function () {
     'use strict'
-  
-    feather.replace()
   
     // Graphs
     var ctx = document.getElementById('myChartBar')
@@ -114,8 +110,6 @@ function setGraph3(datas, somas){
   (function () {
     'use strict'
   
-    feather.replace()
-  
     // Graphs
     var ctx = document.getElementById('myChart30')
     // eslint-disable-next-line no-unused-vars
@@ -150,8 +144,6 @@ function setGraph3(datas, somas){
 function setGraph4(datas, somas){ 
   (function () {
     'use strict'
-  
-    feather.replace()
   
     // Graphs
     var ctx = document.getElementById('myChartBar30')
@@ -188,8 +180,6 @@ function GraphOfTheYearBar(somas){
   (function () {
     'use strict'
   
-    feather.replace()
-  
     // Graphs
     var ctx = document.getElementById('GraphOfTheYearBar')
     // eslint-disable-next-line no-unused-vars
@@ -225,8 +215,6 @@ function GraphOfTheYearBar(somas){
 function GraphOfTheYearLine(somas){ 
   (function () {
     'use strict'
-  
-    feather.replace()
   
     // Graphs
     var ctx = document.getElementById('GraphOfTheYearLine')
